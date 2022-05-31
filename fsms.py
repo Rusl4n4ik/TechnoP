@@ -17,5 +17,9 @@ class Feedback(StatesGroup):
     ftxt = State()
 
 
-class UserIdPas(StatesGroup):
+class UserId(StatesGroup):
     userid = State()
+#
+#
+# class Password(StatesGroup):
+#     pwd= State()

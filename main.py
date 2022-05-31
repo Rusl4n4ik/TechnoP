@@ -5,7 +5,8 @@ from keyboard import languages, menubtn, back_m, lang, xizmat
 import pathlib
 from pathlib import Path
 from aiogram.types import ContentType, Message
-from fsms import Block, Info, Num, Feedback
+from fsms import Block, Info, Num, Feedback, UserId
+from db import registration, check_existing, add_user, feedbck, get_result
 from aiogram.dispatcher import FSMContext
 
 
@@ -13,11 +14,17 @@ API_TOKEN = '5129552109:AAFDehMcyQhuZr-gIvS2QBDNuH4NX0jGpJo'
 
 bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
+tmp = {}
+tmp1 = {}
+tmp2 = {}
 
 
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
     await message.answer("Tilni tanlang", reply_markup=languages)
+    exist_user = check_existing(message.chat.id)
+    if not exist_user:
+        add_user(message.chat.id, message.from_user.first_name, message.from_user.username)
 
 
 @dp.callback_query_handler(text='ozb')
@@ -49,6 +56,66 @@ async def location(message: types.Message):
 @dp.message_handler(Text(equals="✅ Natijalar"))
 async def ans(message: types.Message):
     await message.answer("Namunada ko'rsatilgandek ID va Parol ni kiriting. ID bo'sh joy Parol\nNamuna: 12345 ABCD12", reply_markup=back_m)
+    await UserId.userid.set()
+
+
+@dp.message_handler(state=UserId)
+async def userids(message: types.Message, state: FSMContext):
+    id = int(message.text.split(" ")[0])
+    print(id)
+    await state.finish()
+    natija = get_result(id)
+    print(natija.result)
+    await message.answer("Sizning natijaniz: " + natija.result)
+
+# @dp.message_handler(state=UserId)
+# async def userids(message: types.Message, state: FSMContext):
+#     id = int(message.text.split(" ")[0])
+#     tmp2[message.chat.id] = {}
+#     tmp2[message.chat.id]['id'] = id
+#     print(id)
+#     natija = get_result(id)
+#     print(natija)
+#     await message.answer(natija)
+#     await state.finish()
+#     await message.answer('Parol kiriting')
+#     await Password.pwd.set()
+
+#
+# @dp.message_handler(state=Password)
+# async def password(message: types.Message, state: FSMContext):
+#     pswd = message.text
+#     print(pswd)
+#     tmp2[message.chat.id]['pwd'] = pswd
+#
+    await state.finish()
+    # natija = get_result(tmp2[message.chat.id]['id'])[0]
+    # await message.answer(natija.result)
+
+
+# @dp.message_handler(Text(equals="✅ Natijalar"))
+# async def ans(message: types.Message):
+#     await message.answer("Namunada ko'rsatilgandek ID va Parol ni kiriting. ID bo'sh joy Parol\nNamuna: 12345 ABCD12", reply_markup=back_m)
+#     await message.answer('ID kiriting:')
+#     await UserId.userid.set()
+#
+#
+# @dp.message_handler(state=UserId)
+# async def userids(message: types.Message, state: FSMContext):
+#     userid = message.text
+#     print(userid)
+#     # tmp2[message.chat.id] = {}
+#     # tmp2[message.chat.id]['id'] = userid
+#     await state.finish()
+#     natija = get_result(userid)
+#     print(natija)
+#     await message.answer(natija)
+
+    # await message.answer('Parolni kiriting')
+    # await Password.pwd.set()
+
+
+
 
 
 @dp.message_handler(Text(equals="🚫 Bekor qilish"))
@@ -63,26 +130,29 @@ async def back(message: types.Message):
 
 @dp.message_handler(Text(equals="🧾 Qabul"))
 async def back(message: types.Message):
-    await message.answer("Qabulga yozilish uchun kerakli bo'limni tanlang",reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Qabulga yozilish uchun kerakli bo'limni tanlang",reply_markup=xizmat)
     chat_id = message.from_user.id
-    await bot.send_photo(chat_id=chat_id, photo='AgACAgIAAxkBAAOFYpNhhjZJEzeAwZEkRSqc_S4bNbIAAiG9MRsUVKFISiNdp1O4IYcBAAMCAAN5AAMkBA')
+    # await bot.send_photo(chat_id=chat_id, photo='AgACAgIAAxkBAAOFYpNhhjZJEzeAwZEkRSqc_S4bNbIAAiG9MRsUVKFISiNdp1O4IYcBAAMCAAN5AAMkBA')
     await Block.bulim.set()
 
 
 @dp.message_handler(state=Block)
 async def bulim(message: types.Message, state: FSMContext):
-    text = message.text
+    block = message.text
     await state.finish()
-    print(text)
-    await message.answer("Ismingiz va familiyangizni kiriting:")
+    print(block)
+    await message.answer("Ismingiz va familiyangizni kiriting:", reply_markup=types.ReplyKeyboardRemove())
     await Info.ism_fam.set()
+    tmp[message.chat.id] = {}
+    tmp[message.chat.id]['bulim'] = block
 
 
 @dp.message_handler(state=Info)
 async def bulim(message: types.Message, state: FSMContext):
-    text = message.text
+    info = message.text
     await state.finish()
-    print(text)
+    print(info)
+    tmp[message.chat.id]['fio'] = info
     await message.answer("Telefon raqamingizni qoldring")
     await Num.telefon.set()
 
@@ -92,8 +162,9 @@ async def bulim(message: types.Message, state: FSMContext):
     text = message.text
     await state.finish()
     print(text)
+    tmp[message.chat.id]['text'] = text
+    registration(tmp[message.chat.id]['bulim'], tmp[message.chat.id]['fio'], tmp[message.chat.id]['text'])
     await message.answer('Malumot uchun rahmat', reply_markup=back_m)
-
 
 
 @dp.message_handler(Text(equals="📝 Fikr mulohaza"))
@@ -104,9 +175,12 @@ async def back(message: types.Message):
 
 @dp.message_handler(state=Feedback)
 async def feedback(message: types.Message, state: FSMContext):
-    text = message.text
+    fikr = message.text
     await state.finish()
-    print(text)
+    tmp1[message.chat.id] = {}
+    tmp1[message.chat.id]['feedb'] = fikr
+    feedbck(tmp1[message.chat.id]['feedb'])
+    print(fikr)
     await message.answer('Fikr-mulohaza uchun rahmat!', reply_markup=back_m)
 
 
