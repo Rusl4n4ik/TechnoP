@@ -3,7 +3,6 @@ from sqlalchemy import create_engine, MetaData, Table, Integer, String, \
 Column, DateTime, ForeignKey, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-
 from sqlalchemy.sql import text
 # from fsms import Bulim, Info, Num
 import sqlalchemy
@@ -19,9 +18,8 @@ Base = declarative_base()
 
 class Clients(Base):
     __tablename__ = 'Natijalar'
-    id = Column(Integer, primary_key=True)
-    user_ID = Column(String(50))
-    parol = Column(String(50))
+    id = Column(Integer)
+    user_ID_parol = Column(String(50), primary_key=True)
     result = Column(String(50))
 
 
@@ -130,12 +128,12 @@ def get_result(res):
 # try:
 #     sqlite_connection = sqlite3.connect('bot.sqlite')
 #     cursor = sqlite_connection.cursor()
-#     print("Подключен к SQLite")
+#     print("Подключение к SQLite")
 #
 #     sqlite_insert_query = """INSERT INTO Natijalar
-#                           (user_ID, parol, result)
+#                           (user_ID_parol, result)
 #                           VALUES
-#                           ("'12515'", 'AWRD12', 'Играет Майнкрафт');"""
+#                           ('12575 AZSN42','Инсульт');"""
 #     count = cursor.execute(sqlite_insert_query)
 #     sqlite_connection.commit()
 #     print("Запись успешно вставлена ​​в таблицу sqlitedb_developers ", cursor.rowcount)
