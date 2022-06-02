@@ -5,18 +5,19 @@ from keyboard import languages, menubtn, back_m, lang, xizmat, menubtn_rus, xizm
 import pathlib
 from pathlib import Path
 from aiogram.types import ContentType, Message
-from fsms import Block, Info, Num, Feedback, UserId, BlockRu, InfoRu, NumRu, UserIdRu, FeedbackRu, BlockUz, InfoUz, NumUz, UserIdUz, FeedbackUz
-from db import registration, check_existing, add_user, feedbck, get_result
+from fsms import Block, Info, Num, Feedback, UserId, BlockRu, InfoRu, NumRu, UserIdRu, FeedbackRu, BlockUz, InfoUz, NumUz, UserIdUz, FeedbackUz, AddID, AddRes
+from db import registration, check_existing, add_user, feedbck, get_result, add_result
 from aiogram.dispatcher import FSMContext
 
 
-API_TOKEN = '5518872025:AAHhkVUhDhsfM7cE6AtX96wRWKSCkMnl6Pw'
+API_TOKEN = '5129552109:AAFDehMcyQhuZr-gIvS2QBDNuH4NX0jGpJo'
 
 bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
 tmp = {}
 tmp1 = {}
 tmp2 = {}
+tmp3 = {}
 
 
 # @dp.message_handler(content_types=ContentType.PHOTO)
@@ -30,6 +31,32 @@ async def start_handler(message: types.Message):
     exist_user = check_existing(message.chat.id)
     if not exist_user:
         add_user(message.chat.id, message.from_user.first_name, message.from_user.username)
+
+
+@dp.message_handler(commands=['admin'])
+async def admin(message: types.Message):
+    await message.answer('ID:')
+    await AddID.id.set()
+
+
+@dp.message_handler(state=AddID)
+async def addid(message: types.Message, state: FSMContext):
+    add_id = message.text
+    tmp3[message.chat.id] = {}
+    tmp3[message.chat.id]['idadd'] = add_id
+    await state.finish()
+    print(add_id)
+    await message.answer('Результат:\nНатижа:')
+    await AddRes.result.set()
+
+
+@dp.message_handler(state=AddRes)
+async def addid(message: types.Message, state: FSMContext):
+    add_res = message.text
+    tmp3[message.chat.id]['resadd'] = add_res
+    await state.finish()
+    print(add_res)
+    add_result(tmp3[message.chat.id]['idadd'], tmp3[message.chat.id]['resadd'])
 
 
 @dp.callback_query_handler(text='ozb')

@@ -18,7 +18,6 @@ Base = declarative_base()
 
 class Clients(Base):
     __tablename__ = 'Natijalar'
-    id = Column(Integer)
     user_ID_parol = Column(String(50), primary_key=True)
     result = Column(String(50))
 
@@ -88,6 +87,15 @@ def feedbck(ftxt):
 def get_result(res):
     session = Session()
     return session.query(Clients).get(res)
+
+
+def add_result(add_id, add_res):
+    session = Session()
+    add_result = Clients(user_ID_parol = add_id, result = add_res)
+    session.add(add_result)
+    session.commit()
+    session.close()
+
 
 # def get_result(self, user_id, parol, within="all"):
 #     session = Session()

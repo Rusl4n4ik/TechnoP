@@ -19,6 +19,8 @@ class Feedback(StatesGroup):
 
 class UserId(StatesGroup):
     userid = State()
+
+
 #
 #
 # class Password(StatesGroup):
@@ -67,3 +69,14 @@ class UserIdUz(StatesGroup):
 
 class FeedbackUz(StatesGroup):
     feeduz = State()
+
+
+#######################################################addresult
+
+
+class AddID(StatesGroup):
+    id = State()
+
+
+class AddRes(StatesGroup):
+    result = State()
