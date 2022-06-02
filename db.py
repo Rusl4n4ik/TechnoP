@@ -125,7 +125,7 @@ def add_result(add_id, add_res):
 #     result = session.query(Clients).filter(Clients.user_ID.like(id)).all()
 #     session.close()
 #     return result
-
+#
 
 # def get_result(id):
 #     session = Session()
