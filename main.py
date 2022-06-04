@@ -10,7 +10,7 @@ from db import registration, check_existing, add_user, feedbck, get_result, add_
 from aiogram.dispatcher import FSMContext
 
 
-API_TOKEN = '5129552109:AAFDehMcyQhuZr-gIvS2QBDNuH4NX0jGpJo'
+API_TOKEN = '5518872025:AAHhkVUhDhsfM7cE6AtX96wRWKSCkMnl6Pw'
 
 bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
