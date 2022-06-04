@@ -10,7 +10,7 @@ from db import registration, check_existing, add_user, feedbck, get_result, add_
 from aiogram.dispatcher import FSMContext
 
 
-API_TOKEN = '5518872025:AAHhkVUhDhsfM7cE6AtX96wRWKSCkMnl6Pw'
+API_TOKEN = '5129552109:AAFDehMcyQhuZr-gIvS2QBDNuH4NX0jGpJo'
 
 bot = Bot(token=API_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -87,7 +87,7 @@ async def location(message: types.Message):
 
 @dp.message_handler(Text(equals="✅ Natijalar"))
 async def ans(message: types.Message):
-    await message.answer("Namunada ko'rsatilgandek ID va Parol ni kiriting. ID bo'sh joy Parol\nNamuna: 12345 ABCD12", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Namunada ko'rsatilgandek ID kiriting.\nNamuna: 12345 ABCD12", reply_markup=back_m)
     await UserId.userid.set()
 
 
@@ -101,8 +101,8 @@ async def userids(message: types.Message, state: FSMContext):
         await message.answer("Sizning natijaniz: " + natija.result)
         await state.finish()
     except:
-        await message.answer('Siz ID yoki Parolingizni noto\'g\'ri kiritdingiz')
-
+        await message.answer('Siz ID noto\'g\'ri kiritdingiz')
+        await state.finish()
     # @dp.message_handler(state=UserId)
 # async def userids(message: types.Message, state: FSMContext):
 #     id = int(message.text.split(" ")[0])
@@ -290,7 +290,7 @@ async def priem3(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals="✅ Результаты"))
 async def ans(message: types.Message):
-    await message.answer("Введите свой идентификатор и пароль, как показано в примере. ID пробел Пароль \nПример: 12345 ABCD12", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Введите свой ID, как показано в примере.\nПример: 12345 ABCD12", reply_markup=back_rus)
     await UserIdRu.useridru.set()
 
 
@@ -304,8 +304,8 @@ async def useridsru(message: types.Message, state: FSMContext):
         await message.answer("Ваш результат: " + natija.result, reply_markup=back_rus)
         await state.finish()
     except:
-        await message.answer('Вы неправильно ввели свой ID или пароль', reply_markup=back_rus)
-
+        await message.answer('Вы неправильно ввели свой ID', reply_markup=back_rus)
+        await state.finish()
 
 @dp.message_handler(Text(equals="🇺🇿 / 🇷🇺 Изменить язык"))
 async def back(message: types.Message):
@@ -364,7 +364,7 @@ async def menu(callback: types.CallbackQuery):
 
 @dp.message_handler(Text(equals="🔙 Менюга қайтиш"))
 async def back(message: types.Message):
-    await message.answer('🔝 Главное меню', reply_markup=menubtnuz)
+    await message.answer('🔝 Асосий Меню', reply_markup=menubtnuz)
 
 
 @dp.message_handler(Text(equals="🧾 Кабул"))
@@ -409,7 +409,8 @@ async def qabuluz2(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals="✅ Натижалар"))
 async def ansuz(message: types.Message):
-    await message.answer("Намунада кўрсатилган ИД ва Парол ни киритиш. Id бўш қувонч Парол\nНамуна: 12345 ABCD12", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Намунада кўрсатилган ИД киритинг.\nНамуна: 12345 ABCD12",
+                         reply_markup=types.ReplyKeyboardRemove())
     await UserIdUz.useriduz.set()
 
 
@@ -423,7 +424,8 @@ async def useridsuz(message: types.Message, state: FSMContext):
         await message.answer("Сизнинг натижангиз: " + natija.result, reply_markup=back_uzb)
         await state.finish()
     except:
-        await message.answer('ИД ёки паролингизни нотўғри киритдингиз', reply_markup=back_uzb)
+        await message.answer('ИД нотўғри киритдингиз', reply_markup=back_uzb)
+        await state.finish()
 
 
 @dp.message_handler(Text(equals="🇺🇿 Тилни ўзгартириш"))
